@@ -88,3 +88,11 @@ mutation {
   }
 }
 ```
+
+## Next to do
+
+- [x] Sign-Up
+- [ ] Query the profile with implementing `context.Context`
+- [ ] Sign-In with JWT
+- [ ] Change the password
+- [ ] Change the profile
