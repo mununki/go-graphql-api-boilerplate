@@ -89,6 +89,27 @@ mutation {
 }
 ```
 
+returns
+
+```graphql
+{
+  "data": {
+    "signUp": {
+      "ok": true,
+      "error": null,
+      "user": {
+        "id": "3",
+        "email": "test@test.com",
+				"firstName": "graphql",
+				"lastName": "go",
+				"createdAt": "2019-04-21 02:13:25.274717 +0900 KST m=+15.530652285",
+        "updatedAt": "2019-04-21 02:13:25.274717 +0900 KST m=+15.530652285"
+      }
+    }
+  }
+}
+```
+
 ## Next to do
 
 - [x] Sign-Up
