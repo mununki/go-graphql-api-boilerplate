@@ -1,8 +1,8 @@
 package utils
 
 import (
-	// "encoding/base64"
 	"fmt"
+	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
 )
@@ -23,6 +23,15 @@ func ValidateJWT(tokenString *string) (*string, error) {
 
 	var userID string
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
+		expiredAt := claims["exp"].(string)
+		now := time.Now()
+		exp, _ := time.Parse(time.RFC3339, expiredAt)
+
+		// Token is expired
+		if !now.Before(exp) {
+			return nil, err
+		}
+
 		userID = claims["userID"].(string)
 	} else {
 		// should do something here!
