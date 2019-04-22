@@ -2,11 +2,11 @@ package main // import "github.com/mattdamon108/go-graphql-api-boilerplate"
 
 import (
 	// "log"
+	"context"
 	"net/http"
 	// "fmt"
 
 	graphql "github.com/graph-gophers/graphql-go"
-	"github.com/graph-gophers/graphql-go/relay"
 
 	"github.com/mattdamon108/go-graphql-api-boilerplate/db"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/handler"
@@ -22,12 +22,14 @@ func main() {
 
 	defer db.DB.Close()
 
+	context.Background()
+
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
 	schema := graphql.MustParseSchema(schema.GetSchema(), &resolvers.Resolvers{DB: db}, opts...)
 
 	mux := http.NewServeMux()
-	mux.Handle("/playground", handler.GraphiQL{})
-	mux.Handle("/", &relay.Handler{Schema: schema})
+	mux.Handle("/", handler.GraphiQL{})
+	mux.Handle("/query", handler.Authenticate(&handler.GraphQL{Schema: schema}))
 
 	s := &http.Server{
 		Addr:    ":8080",

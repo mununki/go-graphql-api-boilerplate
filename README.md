@@ -89,22 +89,32 @@ mutation {
 }
 ```
 
-returns
+### Sign In
 
 ```graphql
-{
-  "data": {
-    "signUp": {
-      "ok": true,
-      "error": null,
-      "user": {
-        "id": "3",
-        "email": "test@test.com",
-				"firstName": "graphql",
-				"lastName": "go",
-				"createdAt": "2019-04-21 02:13:25.274717 +0900 KST m=+15.530652285",
-        "updatedAt": "2019-04-21 02:13:25.274717 +0900 KST m=+15.530652285"
-      }
+mutation {
+  signIp(email: "test@test.com", password: "12345678") {
+    ok
+    error
+    token
+  }
+}
+```
+
+### Get my profile
+
+```graphql
+query {
+  getMyProfile {
+    ok
+    error
+    user {
+      id
+      email
+      firstName
+      lastName
+      createdAt
+      updatedAt
     }
   }
 }
@@ -113,7 +123,7 @@ returns
 ## Next to do
 
 - [x] Sign-Up
-- [ ] Query the profile with implementing `context.Context`
-- [ ] Sign-In with JWT
+- [x] Query the profile with implementing `context.Context`
+- [x] Sign-In with JWT
 - [ ] Change the password
 - [ ] Change the profile

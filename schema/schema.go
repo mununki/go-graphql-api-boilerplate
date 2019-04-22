@@ -12,11 +12,17 @@ func GetSchema() string {
 		}
 		type Mutation {
 			signUp(email:String!, password:String!, firstName:String!, lastName:String!): SignUpResponse!
+			signIn(email:String!, password:String!): SignInResponse!
 		}
 		type SignUpResponse {
 			ok: Boolean!
 			error: String
 			user: User
+		}
+		type SignInResponse {
+			ok: Boolean!
+			error: String
+			token: String
 		}
 		type GetMyProfileResponse {
 			ok: Boolean!
