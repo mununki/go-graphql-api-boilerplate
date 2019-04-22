@@ -13,6 +13,13 @@ func GetSchema() string {
 		type Mutation {
 			signUp(email:String!, password:String!, firstName:String!, lastName:String!): SignUpResponse!
 			signIn(email:String!, password:String!): SignInResponse!
+			changePassword(userID: Int!, password: String!): ChangePasswordResponse!
+			changeProfile(userID: Int!, bio: String, avatar: String): ChangeProfileResponse!
+		}
+		type GetMyProfileResponse {
+			ok: Boolean!
+			error: String
+			user: User
 		}
 		type SignUpResponse {
 			ok: Boolean!
@@ -24,7 +31,12 @@ func GetSchema() string {
 			error: String
 			token: String
 		}
-		type GetMyProfileResponse {
+		type ChangePasswordResponse {
+			ok: Boolean!
+			error: String
+			user: User
+		}
+		type ChangeProfileResponse {
 			ok: Boolean!
 			error: String
 			user: User

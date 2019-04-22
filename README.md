@@ -6,6 +6,11 @@
 - GraphQL : [graphql-go](https://github.com/graph-gophers/graphql-go)
 - ORM : [gorm](https://github.com/jinzhu/gorm)
 
+## Features
+
+- User Sign Up & Sign In
+- Change a Password, Profile
+
 ## How to Run
 
 ### Initialize DB
@@ -61,7 +66,7 @@ $ go run server.go
 
 ### GraphQL Playground
 
-Connect to http://localhost:8080/playground
+Connect to http://localhost:8080
 
 ## Usage
 
@@ -82,6 +87,8 @@ mutation {
       email
       firstName
       lastName
+      bio
+      avatar
       createdAt
       updatedAt
     }
@@ -101,6 +108,48 @@ mutation {
 }
 ```
 
+### Change a Password
+
+```graphql
+mutation {
+  changePassword(userID: 1, password: "87654321") {
+    ok
+    error
+    user {
+      id
+      email
+      firstName
+      lastName
+      bio
+      avatar
+      createdAt
+      updatedAt
+    }
+  }
+}
+```
+
+### Change a Profile
+
+```graphql
+mutation {
+  changeProfile(userID: 1, bio: "Go developer", avatar: "go-developer.png") {
+    ok
+    error
+    user {
+      id
+      email
+      firstName
+      lastName
+      bio
+      avatar
+      createdAt
+      updatedAt
+    }
+  }
+}
+```
+
 ### Get my profile
 
 ```graphql
@@ -113,6 +162,8 @@ query {
       email
       firstName
       lastName
+      bio
+      avatar
       createdAt
       updatedAt
     }
@@ -125,5 +176,7 @@ query {
 - [x] Sign-Up
 - [x] Query the profile with implementing `context.Context`
 - [x] Sign-In with JWT
-- [ ] Change the password
-- [ ] Change the profile
+- [x] Change the password
+- [x] Change the profile
+- [ ] Using Configuration file for DB & JWT secret_key
+- [ ] Making schema automation
