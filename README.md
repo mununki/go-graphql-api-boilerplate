@@ -56,12 +56,22 @@ func ConnectDB() (*DB, error) {
 $ go run ./migrations/init.go
 ```
 
+or with docker
+```
+$ docker run --rm go-graphql-api migrate
+```
+
 This will generate the `users` table in the database as per the User Model declared in `./model/user.go` Model
 
 ### Run the server
 
 ```shell
 $ go run server.go
+```
+or with docker
+```
+$ docker build -t go-graphql-api .
+$ docker run -p 8080:8080 go-graphql-api
 ```
 
 ### GraphQL Playground
