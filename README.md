@@ -104,7 +104,7 @@ mutation {
 
 ```graphql
 mutation {
-  signIp(email: "test@test.com", password: "12345678") {
+  signIn(email: "test@test.com", password: "12345678") {
     ok
     error
     token
