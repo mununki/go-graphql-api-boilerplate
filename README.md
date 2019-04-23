@@ -182,5 +182,5 @@ query {
 - [x] Sign-In with JWT
 - [x] Change the password
 - [x] Change the profile
+- [x] Merging \*.graphql files to a schema with `packr`
 - [ ] Using Configuration file for DB & JWT secret_key
-- [ ] Making schema automation
