@@ -1,10 +1,9 @@
 package main // import "github.com/mattdamon108/go-graphql-api-boilerplate"
 
 import (
-	// "log"
 	"context"
+	"log"
 	"net/http"
-	// "fmt"
 
 	graphql "github.com/graph-gophers/graphql-go"
 
@@ -36,6 +35,7 @@ func main() {
 		Handler: mux,
 	}
 
+	log.Println("Listening to... port 8080")
 	if err = s.ListenAndServe(); err != nil {
 		panic(err)
 	}
