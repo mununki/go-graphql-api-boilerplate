@@ -7,14 +7,23 @@ require (
 	github.com/dgrijalva/jwt-go v3.2.0+incompatible
 	github.com/erikstmartin/go-testdb v0.0.0-20160219214506-8d10e4a1bae5 // indirect
 	github.com/go-sql-driver/mysql v1.4.1 // indirect
+	github.com/gobuffalo/depgen v0.1.1 // indirect
+	github.com/gobuffalo/genny v0.1.1 // indirect
+	github.com/gobuffalo/gogen v0.1.1 // indirect
+	github.com/gobuffalo/packr/v2 v2.2.0
 	github.com/gofrs/uuid v3.2.0+incompatible // indirect
 	github.com/graph-gophers/graphql-go v0.0.0-20190225005345-3e8838d4614c
 	github.com/jinzhu/gorm v1.9.2
 	github.com/jinzhu/inflection v0.0.0-20180308033659-04140366298a // indirect
 	github.com/jinzhu/now v1.0.0 // indirect
+	github.com/kr/pty v1.1.4 // indirect
 	github.com/lib/pq v1.1.0 // indirect
 	github.com/mattn/go-sqlite3 v1.10.0 // indirect
-	github.com/stretchr/testify v1.3.0 // indirect
-	golang.org/x/crypto v0.0.0-20190417174047-f416ebab96af
+	github.com/stretchr/objx v0.2.0 // indirect
+	golang.org/x/crypto v0.0.0-20190422183909-d864b10871cd
+	golang.org/x/net v0.0.0-20190420063019-afa5a82059c6 // indirect
+	golang.org/x/sync v0.0.0-20190423024810-112230192c58 // indirect
+	golang.org/x/sys v0.0.0-20190422165155-953cdadca894 // indirect
+	golang.org/x/tools v0.0.0-20190422233926-fe54fb35175b // indirect
 	google.golang.org/appengine v1.5.0 // indirect
 )
