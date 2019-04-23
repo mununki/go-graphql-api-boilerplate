@@ -13,10 +13,6 @@ func respond(w http.ResponseWriter, body []byte, code int) {
 	_, _ = w.Write(body)
 }
 
-func isSupported(method string) bool {
-	return method == "POST" || method == "GET"
-}
-
 func errorJSON(msg string) []byte {
 	buf := bytes.Buffer{}
 	fmt.Fprintf(&buf, `{"error": "%s"}`, msg)
