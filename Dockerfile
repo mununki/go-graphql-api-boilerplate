@@ -18,9 +18,9 @@ ENV PATH /root
 
 WORKDIR /root/
 
-COPY --from=builder /usr/app/go-graphql-api-boilerplate/go-graphql-api-boilerplate .
+COPY --from=builder /usr/app/go-graphql-api-boilerplate .
 
-COPY --from=builder /usr/app/go-graphql-api-boilerplate/migrate .
+COPY --from=builder /usr/app/migrate .
 
 EXPOSE 8080
 
