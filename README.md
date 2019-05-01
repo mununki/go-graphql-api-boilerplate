@@ -146,7 +146,7 @@ mutation {
 
 ```graphql
 mutation {
-  changePassword(userID: 1, password: "87654321") {
+  changePassword(password: "87654321") {
     ok
     error
     user {
@@ -167,7 +167,7 @@ mutation {
 
 ```graphql
 mutation {
-  changeProfile(userID: 1, bio: "Go developer", avatar: "go-developer.png") {
+  changeProfile(bio: "Go developer", avatar: "go-developer.png") {
     ok
     error
     user {
