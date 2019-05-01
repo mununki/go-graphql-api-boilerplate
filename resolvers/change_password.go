@@ -30,7 +30,6 @@ func (r *Resolvers) ChangePassword(ctx context.Context, args changePasswordMutat
 }
 
 type changePasswordMutationArgs struct {
-	UserID   string
 	Password string
 }
 

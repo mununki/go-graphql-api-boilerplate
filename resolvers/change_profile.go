@@ -34,7 +34,6 @@ func (r *Resolvers) ChangeProfile(ctx context.Context, args changeProfileMutatio
 }
 
 type changeProfileMutationArgs struct {
-	UserID string
 	Bio    *string
 	Avatar *string
 }

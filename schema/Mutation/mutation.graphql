@@ -6,12 +6,8 @@ type Mutation {
     lastName: String!
   ): SignUpResponse!
   signIn(email: String!, password: String!): SignInResponse!
-  changePassword(userID: Int!, password: String!): ChangePasswordResponse!
-  changeProfile(
-    userID: Int!
-    bio: String
-    avatar: String
-  ): ChangeProfileResponse!
+  changePassword(password: String!): ChangePasswordResponse!
+  changeProfile(bio: String, avatar: String): ChangeProfileResponse!
 }
 type SignUpResponse {
   ok: Boolean!
