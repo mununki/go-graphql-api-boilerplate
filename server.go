@@ -19,7 +19,7 @@ func main() {
 		panic(err)
 	}
 
-	defer db.DB.Close()
+	defer db.Close()
 
 	context.Background()
 
