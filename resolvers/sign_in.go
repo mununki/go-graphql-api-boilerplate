@@ -11,7 +11,7 @@ import (
 func (r *Resolvers) SignIn(args signInMutationArgs) (*SignInResponse, error) {
 	user := model.User{}
 
-	r.DB.DB.Where("email = ?", args.Email).First(&user)
+	r.DB.Where("email = ?", args.Email).First(&user)
 
 	if user.ID == 0 {
 		msg := "Not Sign up yet"

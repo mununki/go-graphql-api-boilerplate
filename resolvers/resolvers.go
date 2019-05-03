@@ -6,5 +6,5 @@ import (
 
 // Resolvers including query and mutation
 type Resolvers struct {
-	DB *db.DB
+	*db.DB
 }

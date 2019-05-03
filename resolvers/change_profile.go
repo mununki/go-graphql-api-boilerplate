@@ -17,7 +17,7 @@ func (r *Resolvers) ChangeProfile(ctx context.Context, args changeProfileMutatio
 	}
 	user := model.User{}
 
-	if err := r.DB.DB.First(&user, userID).Error; err != nil {
+	if err := r.DB.First(&user, userID).Error; err != nil {
 		msg := "Not existing user"
 		return &ChangeProfileResponse{Status: false, Msg: &msg, User: nil}, nil
 	}
@@ -29,7 +29,7 @@ func (r *Resolvers) ChangeProfile(ctx context.Context, args changeProfileMutatio
 		user.Avatar = *args.Avatar
 	}
 
-	r.DB.DB.Save(&user)
+	r.DB.Save(&user)
 	return &ChangeProfileResponse{Status: true, Msg: nil, User: &UserResponse{u: &user}}, nil
 }
 

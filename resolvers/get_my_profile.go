@@ -17,7 +17,7 @@ func (r *Resolvers) GetMyProfile(ctx context.Context) (*GetMyProfileResponse, er
 	}
 
 	user := model.User{}
-	if err := r.DB.DB.First(&user, userID).Error; err != nil {
+	if err := r.DB.First(&user, userID).Error; err != nil {
 		msg := "Not found"
 		return &GetMyProfileResponse{Status: false, Msg: &msg, User: nil}, nil
 	}

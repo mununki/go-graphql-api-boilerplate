@@ -8,7 +8,7 @@ import (
 
 // DB *grom.DB
 type DB struct {
-	DB *gorm.DB
+	*gorm.DB
 }
 
 // ConnectDB : connecting DB
