@@ -17,7 +17,7 @@ func (r *Resolvers) ChangePassword(ctx context.Context, args changePasswordMutat
 	}
 	user := model.User{}
 
-	if err := r.DB.DB.First(&user, userID).Error; err != nil {
+	if err := r.DB.First(&user, userID).Error; err != nil {
 		msg := "Not existing user"
 		return &ChangePasswordResponse{Status: false, Msg: &msg, User: nil}, nil
 	}
@@ -25,7 +25,7 @@ func (r *Resolvers) ChangePassword(ctx context.Context, args changePasswordMutat
 	user.Password = args.Password
 	user.HashPassword()
 
-	r.DB.DB.Save(&user)
+	r.DB.Save(&user)
 	return &ChangePasswordResponse{Status: true, Msg: nil, User: &UserResponse{u: &user}}, nil
 }
 

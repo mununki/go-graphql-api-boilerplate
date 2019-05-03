@@ -11,8 +11,8 @@ func main() {
 		panic(err)
 	}
 
-	defer d.DB.Close()
+	defer d.Close()
 
-	d.DB.DropTableIfExists(&model.User{})
-	d.DB.CreateTable(&model.User{})
+	d.DropTableIfExists(&model.User{})
+	d.CreateTable(&model.User{})
 }
