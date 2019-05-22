@@ -24,7 +24,7 @@ func main() {
 	context.Background()
 
 	opts := []graphql.SchemaOpt{graphql.UseFieldResolvers()}
-	schema := graphql.MustParseSchema(schema.GetSchema(), &resolvers.Resolvers{DB: db}, opts...)
+	schema := graphql.MustParseSchema(*schema.NewSchema(), &resolvers.Resolvers{DB: db}, opts...)
 
 	mux := http.NewServeMux()
 	mux.Handle("/", handler.GraphiQL{})
