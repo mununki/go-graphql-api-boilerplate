@@ -5,7 +5,7 @@ import (
 )
 
 func TestGetSchema(t *testing.T) {
-	s := GetSchema()
+	s := NewSchema()
 
-	t.Log(s)
+	t.Log(*s)
 }
