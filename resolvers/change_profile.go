@@ -2,7 +2,9 @@ package resolvers
 
 import (
 	"context"
+	"time"
 
+	"github.com/doug-martin/goqu/v9"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/handler"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
 )
@@ -15,27 +17,36 @@ func (r *Resolvers) ChangeProfile(ctx context.Context, args changeProfileMutatio
 		msg := "Not Authorized"
 		return &ChangeProfileResponse{Status: false, Msg: &msg, User: nil}, nil
 	}
-	user := model.User{}
 
-	if err := r.DB.First(&user, userID).Error; err != nil {
+	update := r.DB.
+		Update("user").
+		Where(goqu.C("id").Eq(userID)).
+		Set(goqu.Record{"nickname": args.Nickname, "updated_at": time.Now()}).
+		Executor()
+	if _, err := update.Exec(); err != nil {
+		msg := "Failed to save to DB"
+		return &ChangeProfileResponse{Status: false, Msg: &msg, User: nil}, nil
+	}
+
+	user := model.User{}
+	found, err := r.DB.
+		From("user").
+		Where(goqu.C("id").Eq(userID)).
+		ScanStruct(&user)
+	if err != nil {
+		msg := "Failed to query user"
+		return &ChangeProfileResponse{Status: false, Msg: &msg, User: nil}, nil
+	}
+	if !found {
 		msg := "Not existing user"
 		return &ChangeProfileResponse{Status: false, Msg: &msg, User: nil}, nil
 	}
 
-	if args.Bio != nil {
-		user.Bio = *args.Bio
-	}
-	if args.Avatar != nil {
-		user.Avatar = *args.Avatar
-	}
-
-	r.DB.Save(&user)
 	return &ChangeProfileResponse{Status: true, Msg: nil, User: &UserResponse{u: &user}}, nil
 }
 
 type changeProfileMutationArgs struct {
-	Bio    *string
-	Avatar *string
+	Nickname string
 }
 
 // ChangeProfileResponse is the response type

@@ -4,7 +4,6 @@ import (
 	"strconv"
 
 	graphql "github.com/graph-gophers/graphql-go"
-
 	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
 )
 
@@ -24,29 +23,9 @@ func (r *UserResponse) Email() string {
 	return r.u.Email
 }
 
-// Password for UserResponse
-func (r *UserResponse) Password() string {
-	return r.u.Password
-}
-
-// FirstName for UserResponse
-func (r *UserResponse) FirstName() string {
-	return r.u.FirstName
-}
-
-// LastName for UserResponse
-func (r *UserResponse) LastName() string {
-	return r.u.LastName
-}
-
-// Bio for UserResponse
-func (r *UserResponse) Bio() *string {
-	return &r.u.Bio
-}
-
-// Avatar for UserResponse
-func (r *UserResponse) Avatar() *string {
-	return &r.u.Avatar
+// Nickame for UserResponse
+func (r *UserResponse) Nickname() *string {
+	return r.u.Nickname
 }
 
 // CreatedAt for UserResponse
@@ -57,4 +36,9 @@ func (r *UserResponse) CreatedAt() string {
 // UpdatedAt for UserResponse
 func (r *UserResponse) UpdatedAt() string {
 	return r.u.UpdatedAt.String()
+}
+
+// DeletedAt for UserResponse
+func (r *UserResponse) DeletedAt() string {
+	return r.u.DeletedAt.String()
 }
