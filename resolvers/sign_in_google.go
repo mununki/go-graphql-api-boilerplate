@@ -1,30 +1,57 @@
 package resolvers
 
 import (
+	"context"
+	"log"
+	"os"
 	"strconv"
 	"time"
 
 	"github.com/doug-martin/goqu/v9"
+	"github.com/joho/godotenv"
+	"github.com/mitchellh/mapstructure"
+	"google.golang.org/api/idtoken"
 
 	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/utils"
 )
 
+type Claims struct {
+	Sub   string
+	Email string
+}
+
 // SignInGoogle mutation
-func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleResponse, error) {
+func (r *Resolvers) SignInGoogle(ctx context.Context, args signInGoogleMutationArgs) (*SignInGoogleResponse, error) {
 	// check if exist 1) by googleID 2) by email
 	// 1) googleId exists -> sign in
 	// 2) email exists -> update googleId -> sign in
 	// 3) otherwise sign up
 
-	// TODO: MUST verify the google accessToken with google Auth API
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
+	payload, err := idtoken.Validate(ctx, args.IdToken, os.Getenv("GOOGLE_CLIENT_ID"))
+	if err != nil {
+		msg := "Failed to sign in with google"
+		return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
+	}
+
+	claims := Claims{}
+	err = mapstructure.Decode(payload.Claims, &claims)
+	if err != nil {
+		msg := "Failed to sign in with google"
+		return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
+	}
 
 	userAndSocial := model.UserAndSocial{}
 
 	found, err := r.DB.
 		From("user").
 		Join(goqu.T("user_social"), goqu.On(goqu.I("user.id").Eq(goqu.I("user_social.user_id")))).
-		Where(goqu.I("user_social.google").Eq(args.GoogleId)).
+		Where(goqu.I("user_social.google").Eq(claims.Sub)).
 		ScanStruct(&userAndSocial)
 	if err != nil {
 		// fatal error
@@ -36,7 +63,7 @@ func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleRe
 		found, err := r.DB.
 			From("user").
 			Join(goqu.T("user_social"), goqu.On(goqu.I("user.id").Eq(goqu.I("user_social.user_id")))).
-			Where(goqu.I("user.email").Eq(args.Email)).
+			Where(goqu.I("user.email").Eq(claims.Email)).
 			ScanStruct(&userAndSocial)
 		if err != nil {
 			// fatal error
@@ -51,7 +78,7 @@ func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleRe
 				return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
 			}
 
-			insert := tx.Insert("user").Rows(goqu.Record{"email": args.Email}).Executor()
+			insert := tx.Insert("user").Rows(goqu.Record{"email": claims.Email}).Executor()
 			result, err := insert.Exec()
 			if err != nil {
 				if rErr := tx.Rollback(); rErr != nil {
@@ -72,7 +99,7 @@ func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleRe
 				return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
 			}
 
-			insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "google": args.GoogleId}).Executor()
+			insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "google": claims.Sub}).Executor()
 			if _, err := insert.Exec(); err != nil {
 				if rErr := tx.Rollback(); rErr != nil {
 					msg := "Failed to sign in with google: transaction failed to be rolled back"
@@ -99,7 +126,7 @@ func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleRe
 			// no matching googleId, but email -> update googleId -> sign in
 			insert := r.DB.
 				Update("user_social").
-				Set(goqu.Record{"google": args.GoogleId, "updated_at": time.Now()}).
+				Set(goqu.Record{"google": claims.Sub, "updated_at": time.Now()}).
 				Where(goqu.C("user_id").Eq(userAndSocial.User.ID)).
 				Executor()
 			if _, err := insert.Exec(); err != nil {
@@ -129,8 +156,7 @@ func (r *Resolvers) SignInGoogle(args signInGoogleMutationArgs) (*SignInGoogleRe
 }
 
 type signInGoogleMutationArgs struct {
-	GoogleId string
-	Email    string
+	IdToken string
 }
 
 // SignInResponse is the response type
