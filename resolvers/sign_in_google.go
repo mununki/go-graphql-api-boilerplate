@@ -50,14 +50,14 @@ func (r *Resolvers) SignInGoogle(ctx context.Context, args signInGoogleMutationA
 			return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
 		}
 		if !found {
-			// 일치하는 googleId, email 없는 경우 -> 회원가입
+			// no matching googleId, no matching email -> sign up
 			tx, err := r.DB.Begin()
 			if err != nil {
 				msg := "Failed to sign in with google: transaction failed to begin"
 				return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
 			}
 
-			insert := tx.Insert("user").Rows(goqu.Record{"email": claims.Email}).Executor()
+			insert := tx.Insert("user").Rows(goqu.Record{"email": claims.Email, "nickname": claims.Name}).Executor()
 			result, err := insert.Exec()
 			if err != nil {
 				if rErr := tx.Rollback(); rErr != nil {

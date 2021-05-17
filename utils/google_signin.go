@@ -13,6 +13,7 @@ import (
 type Claims struct {
 	Sub   string
 	Email string
+	Name  string
 }
 
 func GoogleSignIn(ctx context.Context, idToken string) (*Claims, error) {
