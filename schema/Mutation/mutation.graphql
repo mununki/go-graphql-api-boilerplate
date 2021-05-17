@@ -1,6 +1,6 @@
 type Mutation {
   signInGoogle(idToken: String!): SignInResponse!
-  signInKakao(email: String, kakaoId: String!): SignInResponse!
+  signInKakao(code: String!): SignInResponse!
   # changePassword(password: String!): ChangePasswordResponse!
   changeProfile(nickname: String!): ChangeProfileResponse!
 }

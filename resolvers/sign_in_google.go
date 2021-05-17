@@ -2,15 +2,10 @@ package resolvers
 
 import (
 	"context"
-	"log"
-	"os"
 	"strconv"
 	"time"
 
 	"github.com/doug-martin/goqu/v9"
-	"github.com/joho/godotenv"
-	"github.com/mitchellh/mapstructure"
-	"google.golang.org/api/idtoken"
 
 	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/utils"
@@ -28,23 +23,7 @@ func (r *Resolvers) SignInGoogle(ctx context.Context, args signInGoogleMutationA
 	// 2) email exists -> update googleId -> sign in
 	// 3) otherwise sign up
 
-	err := godotenv.Load()
-	if err != nil {
-		log.Fatal("Error loading .env file")
-	}
-
-	payload, err := idtoken.Validate(ctx, args.IdToken, os.Getenv("GOOGLE_CLIENT_ID"))
-	if err != nil {
-		msg := "Failed to sign in with google"
-		return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
-	}
-
-	claims := Claims{}
-	err = mapstructure.Decode(payload.Claims, &claims)
-	if err != nil {
-		msg := "Failed to sign in with google"
-		return &SignInGoogleResponse{Status: false, Msg: &msg, Token: nil}, nil
-	}
+	claims, err := utils.GoogleSignIn(ctx, args.IdToken)
 
 	userAndSocial := model.UserAndSocial{}
 

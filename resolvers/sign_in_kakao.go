@@ -17,14 +17,18 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 	// 2) input args.Email -> matching email -> update kakaoId -> sign in
 	// 3) otherwise sign up
 
-	// TODO: MUST verify the kakao accessToken with kakao Auth API
+	userInfo, err := utils.KakaoLogin(args.Code)
+	if err != nil {
+		msg := "Failed to get a userInfo from Kakao"
+		return &SignInKakaoResponse{Status: false, Msg: &msg, Token: nil}, nil
+	}
 
 	userAndSocial := model.UserAndSocial{}
 
 	found, err := r.DB.
 		From("user").
 		Join(goqu.T("user_social"), goqu.On(goqu.I("user.id").Eq(goqu.I("user_social.user_id")))).
-		Where(goqu.I("user_social.kakao").Eq(args.KakaoId)).
+		Where(goqu.I("user_social.kakao").Eq(userInfo.Id)).
 		ScanStruct(&userAndSocial)
 	if err != nil {
 		// fatal error
@@ -32,12 +36,12 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 		return &SignInKakaoResponse{Status: false, Msg: &msg, Token: nil}, nil
 	}
 	if !found {
-		if args.Email != nil {
+		if userInfo.KakaoAccount.Profile.Nickname != nil {
 			// no matching kakaoId, input args.Email -> query by email
 			found, err := r.DB.
 				From("user").
 				Join(goqu.T("user_social"), goqu.On(goqu.I("user.id").Eq(goqu.I("user_social.user_id")))).
-				Where(goqu.I("user.email").Eq(args.Email)).
+				Where(goqu.I("user.email").Eq(userInfo.KakaoAccount.Profile.Nickname)).
 				ScanStruct(&userAndSocial)
 			if err != nil {
 				// fatal error
@@ -54,7 +58,7 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 					return &SignInKakaoResponse{Status: false, Msg: &msg, Token: nil}, nil
 				}
 
-				insert := tx.Insert("user").Rows(goqu.Record{"email": args.Email}).Executor()
+				insert := tx.Insert("user").Rows(goqu.Record{"email": userInfo.KakaoAccount.Profile.Nickname}).Executor()
 				result, err := insert.Exec()
 				if err != nil {
 					if rErr := tx.Rollback(); rErr != nil {
@@ -75,7 +79,7 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 					return &SignInKakaoResponse{Status: false, Msg: &msg, Token: nil}, nil
 				}
 
-				insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "kakao": args.KakaoId}).Executor()
+				insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "kakao": userInfo.Id}).Executor()
 				if _, err := insert.Exec(); err != nil {
 					if rErr := tx.Rollback(); rErr != nil {
 						msg := "Failed to sign in with kakao: transaction failed to be rolled back"
@@ -102,7 +106,7 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 				// no matching kakaoId, matching email -> update kakaoId -> sign in
 				insert := r.DB.
 					Update("user_social").
-					Set(goqu.Record{"kakao": args.KakaoId, "updated_at": time.Now()}).
+					Set(goqu.Record{"kakao": userInfo.Id, "updated_at": time.Now()}).
 					Where(goqu.C("user_id").Eq(userAndSocial.User.ID)).
 					Executor()
 				if _, err := insert.Exec(); err != nil {
@@ -148,7 +152,7 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 				return &SignInKakaoResponse{Status: false, Msg: &msg, Token: nil}, nil
 			}
 
-			insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "kakao": args.KakaoId}).Executor()
+			insert = tx.Insert("user_social").Rows(goqu.Record{"user_id": id, "kakao": userInfo.Id}).Executor()
 			if _, err := insert.Exec(); err != nil {
 				if rErr := tx.Rollback(); rErr != nil {
 					msg := "Failed to sign in with kakao: transaction failed to be rolled back"
@@ -186,8 +190,7 @@ func (r *Resolvers) SignInKakao(args signInKakaoMutationArgs) (*SignInKakaoRespo
 }
 
 type signInKakaoMutationArgs struct {
-	KakaoId string
-	Email   *string
+	Code string
 }
 
 // SignInResponse is the response type
