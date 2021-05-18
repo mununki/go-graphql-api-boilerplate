@@ -15,8 +15,9 @@
 
 ### Initialize DB
 
-1. Create a database
-Configure the db in `db/db.go`
+1. Create a database using `sql/create.sql` (MYSQL)
+
+2. Configure the db in `db/db.go`
 
 ```go
 // ConnectDB : connecting DB
