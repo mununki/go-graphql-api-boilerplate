@@ -2,19 +2,26 @@ package utils
 
 import (
 	"fmt"
+	"os"
 	"time"
 
 	jwt "github.com/dgrijalva/jwt-go"
+	"github.com/joho/godotenv"
 )
 
 // ValidateJWT : func to parse JWT and to return the identity
 func ValidateJWT(tokenString *string) (*string, error) {
+	err := godotenv.Load()
+	if err != nil {
+		panic(err)
+	}
+
 	token, err := jwt.Parse(*tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("  Unexpected signing method: %v", token.Header["alg"])
 		}
 
-		return []byte("my_secret"), nil
+		return []byte(os.Getenv("JWT_SECRET")), nil
 	})
 
 	if err != nil {
