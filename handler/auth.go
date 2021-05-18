@@ -2,8 +2,10 @@ package handler
 
 import (
 	"context"
-	"github.com/mattdamon108/go-graphql-api-boilerplate/utils"
 	"net/http"
+	"strings"
+
+	"github.com/mattdamon108/go-graphql-api-boilerplate/utils"
 )
 
 // ContextKey for the userID in context
@@ -15,10 +17,7 @@ func Authenticate(h http.Handler) http.Handler {
 		// var userID *string
 
 		ctx := r.Context()
-		userID, err := validateAuthHeader(ctx, r)
-		if err != nil {
-			// should do something here
-		}
+		userID := validateAuthHeader(ctx, r)
 
 		if userID != nil {
 			ctx = context.WithValue(ctx, ContextKey("userID"), *userID)
@@ -28,12 +27,17 @@ func Authenticate(h http.Handler) http.Handler {
 	})
 }
 
-func validateAuthHeader(ctx context.Context, r *http.Request) (*string, error) {
+func validateAuthHeader(ctx context.Context, r *http.Request) *string {
 	tokenString := r.Header.Get("Authorization")
 	if tokenString == "" {
-		return nil, nil
+		return nil
 	}
 
-	userID, err := utils.ValidateJWT(&tokenString)
-	return userID, err
+	authorization := strings.Split(tokenString, " ")
+	if len(authorization) != 2 || authorization[0] != "Bearer" {
+		return nil
+	}
+
+	userID, _ := utils.ValidateJWT(&authorization[1])
+	return userID
 }
