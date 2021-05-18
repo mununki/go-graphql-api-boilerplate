@@ -1,18 +1,8 @@
 type Mutation {
-  signUp(
-    email: String!
-    password: String!
-    firstName: String!
-    lastName: String!
-  ): SignUpResponse!
-  signIn(email: String!, password: String!): SignInResponse!
-  changePassword(password: String!): ChangePasswordResponse!
-  changeProfile(bio: String, avatar: String): ChangeProfileResponse!
-}
-type SignUpResponse {
-  ok: Boolean!
-  error: String
-  user: User
+  signInGoogle(idToken: String!): SignInResponse!
+  signInKakao(code: String!): SignInResponse!
+  # changePassword(password: String!): ChangePasswordResponse!
+  changeProfile(nickname: String!): ChangeProfileResponse!
 }
 type SignInResponse {
   ok: Boolean!
@@ -22,7 +12,6 @@ type SignInResponse {
 type ChangePasswordResponse {
   ok: Boolean!
   error: String
-  user: User
 }
 type ChangeProfileResponse {
   ok: Boolean!

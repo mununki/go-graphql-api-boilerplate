@@ -2,9 +2,12 @@ package resolvers
 
 import (
 	"context"
+	"time"
+
+	"github.com/doug-martin/goqu/v9"
 
 	"github.com/mattdamon108/go-graphql-api-boilerplate/handler"
-	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
+	"github.com/mattdamon108/go-graphql-api-boilerplate/utils"
 )
 
 // ChangePassword mutation change password
@@ -13,20 +16,22 @@ func (r *Resolvers) ChangePassword(ctx context.Context, args changePasswordMutat
 
 	if userID == nil {
 		msg := "Not Authorized"
-		return &ChangePasswordResponse{Status: false, Msg: &msg, User: nil}, nil
-	}
-	user := model.User{}
-
-	if err := r.DB.First(&user, userID).Error; err != nil {
-		msg := "Not existing user"
-		return &ChangePasswordResponse{Status: false, Msg: &msg, User: nil}, nil
+		return &ChangePasswordResponse{Status: false, Msg: &msg}, nil
 	}
 
-	user.Password = args.Password
-	user.HashPassword()
+	hashed, err := utils.HashPassword(args.Password)
+	if err != nil {
+		msg := "Failed to hash the password"
+		return &ChangePasswordResponse{Status: false, Msg: &msg}, nil
+	}
 
-	r.DB.Save(&user)
-	return &ChangePasswordResponse{Status: true, Msg: nil, User: &UserResponse{u: &user}}, nil
+	update := r.DB.Update("user").Where(goqu.C("id").Eq(userID)).Set(goqu.Record{"password": hashed, "updated_at": time.Now()}).Executor()
+	if _, err := update.Exec(); err != nil {
+		msg := "Failed to save to DB"
+		return &ChangePasswordResponse{Status: false, Msg: &msg}, nil
+	}
+
+	return &ChangePasswordResponse{Status: true, Msg: nil}, nil
 }
 
 type changePasswordMutationArgs struct {
@@ -37,7 +42,6 @@ type changePasswordMutationArgs struct {
 type ChangePasswordResponse struct {
 	Status bool
 	Msg    *string
-	User   *UserResponse
 }
 
 // Ok for ChangePasswordResponse

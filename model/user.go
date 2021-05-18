@@ -1,51 +1,27 @@
 package model
 
-import (
-	"golang.org/x/crypto/bcrypt"
-	"time"
+import "time"
 
-	"github.com/jinzhu/gorm"
-	// gorm postgres dialect
-	_ "github.com/jinzhu/gorm/dialects/postgres"
-)
-
-// Model : gorm.Model definition
-type Model struct {
-	ID        uint `gorm:"primary_key"`
-	CreatedAt time.Time
-	UpdatedAt time.Time
-	DeletedAt *time.Time
-}
-
-// User : Model with injected fields `ID`, `CreatedAt`, `UpdatedAt`
 type User struct {
-	gorm.Model
-	Email     string `gorm:"type:varchar(100);not null"`
-	Password  string `gorm:"not null"`
-	FirstName string `gorm:"type:varchar(50);not null"`
-	LastName  string `gorm:"type:varchar(50);not null"`
-	Bio       string
-	Avatar    string
+	ID        uint       `db:"id"`
+	Email     string     `db:"email"`
+	Nickname  *string    `db:"nickname"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt *time.Time `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }
 
-// HashPassword : hashing the password
-func (user *User) HashPassword() {
-	hash, err := bcrypt.GenerateFromPassword([]byte(user.Password), bcrypt.DefaultCost)
-
-	if err != nil {
-		return
-	}
-
-	user.Password = string(hash)
+type UserSocial struct {
+	ID        uint       `db:"id"`
+	UserID    uint       `db:"user_id"`
+	Google    *string    `db:"google"`
+	Kakao     *string    `db:"kakao"`
+	CreatedAt time.Time  `db:"created_at"`
+	UpdatedAt *time.Time `db:"updated_at"`
+	DeletedAt *time.Time `db:"deleted_at"`
 }
 
-// ComparePassword : compare the password
-func (user *User) ComparePassword(password string) bool {
-	err := bcrypt.CompareHashAndPassword([]byte(user.Password), []byte(password))
-
-	if err != nil {
-		return false
-	}
-
-	return true
+type UserAndSocial struct {
+	User       User       `db:"user"`
+	UserSocial UserSocial `db:"user_social"`
 }

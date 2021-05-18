@@ -3,6 +3,8 @@ package resolvers
 import (
 	"context"
 
+	"github.com/doug-martin/goqu/v9"
+
 	"github.com/mattdamon108/go-graphql-api-boilerplate/handler"
 	"github.com/mattdamon108/go-graphql-api-boilerplate/model"
 )
@@ -17,10 +19,16 @@ func (r *Resolvers) GetMyProfile(ctx context.Context) (*GetMyProfileResponse, er
 	}
 
 	user := model.User{}
-	if err := r.DB.First(&user, userID).Error; err != nil {
-		msg := "Not found"
+	found, err := r.DB.From("user").Where(goqu.C("id").Eq(userID)).ScanStruct(&user)
+	if err != nil {
+		msg := "Failed to query user"
 		return &GetMyProfileResponse{Status: false, Msg: &msg, User: nil}, nil
 	}
+	if !found {
+		msg := "Not existing user"
+		return &GetMyProfileResponse{Status: false, Msg: &msg, User: nil}, nil
+	}
+
 	return &GetMyProfileResponse{Status: true, Msg: nil, User: &UserResponse{u: &user}}, nil
 }
 
