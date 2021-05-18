@@ -12,6 +12,7 @@ require (
 	github.com/mattdamon108/gqlmerge v0.2.2
 	github.com/mitchellh/mapstructure v1.4.1
 	github.com/opentracing/opentracing-go v1.2.0 // indirect
+	github.com/rs/cors v1.7.0 // indirect
 	golang.org/x/crypto v0.0.0-20210513164829-c07d793c2f9a
 	google.golang.org/api v0.46.0
 )
