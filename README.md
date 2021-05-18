@@ -72,7 +72,17 @@ You need to set the Http request headers `Authorization`: `{JWT_token}`
 
 ```graphql
 mutation {
-  signInGoogle(email: "me@gmail.com", googleId: "12345678") {
+  signInGoogle(idToken: "12345678") {
+    ok
+    error
+    token
+  }
+}
+```
+
+```graphql
+mutation {
+  signInKakao(code: "12345678") {
     ok
     error
     token
