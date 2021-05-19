@@ -47,6 +47,7 @@ func ConnectDB() (*DB, error) {
 ### Make `.env` file
 ```env
 STAGE=PROD // PROD for production or else for debug
+JWT_SECRET=my_secret
 GOOGLE_CLIENT_ID=your_google_web_client_id
 KAKAO_REST_API_KEY=your_kakao_rest_api_key
 KAKAO_REDIRECT_URI=http://localhost:8280/oauth/kakao/redirect
